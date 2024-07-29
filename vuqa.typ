@@ -4,6 +4,8 @@
 #show raw: set text(font: "LXGW WenKai Mono GB", weight: 700)
 #set page(width: auto, height: auto, margin: 1cm)
 
+#let taowa(it, size) = [
+
 #let title(it) = {
   move(box(
     text(stroke: black + 0.01em, size: 1.8em, it),
@@ -117,7 +119,7 @@
   - 那个画图的网站？\
     csacademy.com/app/graph_editor/
   - 那个查原题的网站？\
-    45.63.4.94:1234
+    www.yuantiji.ac/zh
   - 那个 AtCoder 评分的网站？\
     kenkoooo.com/atcoder/\#/table/
   - 那个能看 Codeforces 题目整理的网站？\
@@ -134,6 +136,11 @@
     官方工具：TUACK + LaTeX\
     广告：#fa-github()/Wallbreaker5th/fuzzy-cnoi-statement\
     #h(3em)#fa-github()/Wallbreaker5th/OI-statement-LaTeX
+  - 那个 U 群常见问题速查的图？\
+    #{
+      let ratio = 20%
+      scale(box(it, width: size.width, height: size.height), ratio, reflow: true)
+    }
 ]
 
 #let credits = [
@@ -161,3 +168,14 @@
 )
 
 #place(bottom+right, credits)
+
+]
+
+#context{
+  let size = measure(taowa(none, (width: 0pt, height: 0pt)))
+  let it = []
+  for i in range(5) {
+    it = taowa(it, size)
+  }
+  it
+}
