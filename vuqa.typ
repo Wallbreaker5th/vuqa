@@ -1,7 +1,7 @@
 #import "@preview/fontawesome:0.2.0": *
 
 #set text(font: ("Source Han Sans SC", ), size: 14pt, lang: "zh", region: "CN")
-#show raw: set text(font: "LXGW WenKai Mono GB", weight: 700)
+#show raw: set text(font: "LXGW WenKai Mono GB", weight: 700, size: 1.25em)
 #set page(width: auto, height: auto, margin: 1cm)
 
 #let taowa(it, size) = [
@@ -30,7 +30,7 @@
 }
 
 #let turing-poly = [
-  可以除 $w$ 或除 $log$，很难降次数。$omega$ 为矩阵乘法复杂度指数下界。
+  可以除 $w$ 或除 $log$，很难降次数。$omega < 2.372$ 为矩阵乘法复杂度指数下界。
 
   #figure(table(
     stroke: 0.5pt,
@@ -88,6 +88,18 @@
 #let tables = [
   #let w = (2, 3, 4, 5, 6, 7, 8, 8, 9, 10, 10, 11, 12, 12, 13, 13, 14, 15)
   #let d = (4, 12, 32, 64, 128, 240, 448, 768, 1344, 2304, 4032, 6720, 10752, 17280, 26880, 41472, 64512, 103680)
+  #let argmaxd = (8, 96, 840, 9240, 83160, 997920, 8648640, 98017920, 931170240, 9311702400, 97772875200, 963761198400, 9316358251200, 97821761637600, 978217616376000, 9097423832296800, 96172766227137600, 897612484786617600)
+  #let argmaxd = argmaxd.map(x => {
+    let s = str(x)
+    let s_ = ()
+    for i in range(s.codepoints().len()) {
+      s_.push(s.codepoints().at(i))
+      if calc.rem(i, 8) == 7 {
+        s_.push("\n")
+      }
+    }
+    text(s_.join(""), size: .7em, font: "LXGW WenKai Mono GB")
+  })
   #let col = 9
 
   #figure(table(
@@ -106,6 +118,8 @@
         res += range(1+i*col, 10+i*col).map(j => $#w.at(j - 1)$)
         res.push($max {d(n)}$)
         res += range(1+i*col, 10+i*col).map(j => $#d.at(j - 1)$)
+        res.push($arg max {d(n)}$)
+        res += range(1+i*col, 10+i*col).map(j => argmaxd.at(j - 1))
       }
       res
     }
@@ -116,22 +130,13 @@
   - vuqa 是什么意思？\
     van 能的 UOJ 群啊
 
-  - 那个画图的网站？\
-    csacademy.com/app/graph_editor/
-  - 那个查原题的网站？\
-    www.yuantiji.ac/zh
-  - 那个 AtCoder 评分的网站？\
-    kenkoooo.com/atcoder/\#/table/
-  - 那个能看 Codeforces 题目整理的网站？\
-    cftracker.netlify.app/contests
-  - 那个看编译得到的汇编的网站？\
-    godbolt.org
-  - 那个把 C 语言类型转成人话的网站？\
-    cdecl.org
-  - XXX 用 LaTeX 怎么打？\
-    detexify.kirelabs.org/classify.html\
-    许多网站使用 KaTeX 渲染公式，相应文档见\
-    katex.org/docs/supported
+  - UB (Undefined Behavior，未定义行为) 是什么？\
+    zh.cppreference.com/w/cpp/language/ub
+    - 我的引用怎么失效了（`tr[x].ls=insert()`）？\
+      在 C++ 17 之前，这段代码可能的求值顺序是：求出 `tr[x]` 的位置 → 插入（此时 `vector` 可能因为扩容而移动 `tr` 的存储的位置） → 已经求出来了的 `tr[x]` 的位置失效了，但我们要往这个失效的位置写入数据 → 寄了。
+
+    - 扩展阅读：求值顺序（*不是运算结合性*）：\
+      zh.cppreference.com/w/cpp/language/eval_order
   - 怎么做 NOI 排版风格的题面？\
     官方工具：TUACK + LaTeX\
     广告：#fa-github()/Wallbreaker5th/fuzzy-cnoi-statement\
@@ -141,10 +146,42 @@
       let ratio = 20%
       scale(box(it, width: size.width, height: size.height), ratio, reflow: true)
     }
+
+  #v(2em)
+]
+
+#let sites = [
+  - 那个画图的网站？\
+    csacademy.com/app/graph_editor/
+
+  - 那个查原题的网站？\
+    www.yuantiji.ac/zh
+  - 那个 AtCoder 评分的网站？\
+    kenkoooo.com/atcoder/\#/table/
+  - 那个能看 Codeforces 题目整理的网站？\
+    cftracker.netlify.app/contests
+  - 那个能看所有 OJ 的比赛的网站？\
+    clist.by
+  - 那个看编译得到的汇编的网站？\
+    godbolt.org
+  - 那个把 C 语言类型转成人话的网站？\
+    cdecl.org
+  - XXX 用 LaTeX 怎么打？\
+    detexify.kirelabs.org/classify.html\
+    许多网站使用 KaTeX 渲染公式，相应文档见\
+    katex.org/docs/supported
+]
+
+#let tasks = [
+  - 单点修改区间 $op("mex")$\
+    考虑一个值 $v$，$v$ 没出现说明 $[l,r]$ 夹在 $v$ 的相邻两次出现之间。因此对于每个值 $v$ 的相邻两次出现 $i$ 和 $j$，在数据结构中插入点 $(i,j)$、权值为 $v$；查询为 $i<l<=r<j$ 的点的权值最小值（单点修改，矩形求 $min$），使用树套树即可。
+
+  
 ]
 
 #let credits = [
   #set text(fill: gray)
+  Version: #datetime.today().display()\
   Visit #fa-github()/Wallbreaker5th/vuqa for the source code and the latest version.
 ]
 
@@ -153,18 +190,37 @@
 #v(-2em)
 
 #grid(
-  columns: (auto, 28em, auto),
-  inset: 1em,
-  grid.cell(colspan: 2)[= 图灵奖],
-  grid.cell(x: 0, y: 1)[== 多项式复杂度],
-  grid.cell(x: 0, y: 2, rowspan: 3, turing-poly),
-  grid.cell(x: 1, y: 3)[== NPC/NP-Hard/\#P-Hard],
-  grid.cell(x: 1, y: 4, turing-npc),
-  grid.cell(x: 1, y: 1, rowspan: 2, turing-reference),
-  grid.cell(x: 0, y: 5, colspan: 2)[= 约数个数/不同质因子个数表],
-  grid.cell(x: 0, y: 6, colspan: 2, tables),
-  grid.cell(x: 2, y: 0)[= 其他],
-  grid.cell(x: 2, y: 1, rowspan: 4, others),
+  columns: (28em, 28em, 28em, 28em),
+  grid.cell(inset: 1em, colspan: 2)[= 图灵奖],
+  grid.cell(x: 0, y: 1, grid(
+    inset: 1em,
+    columns: (100%,),
+    [== 多项式复杂度],
+    turing-poly
+  )),
+  grid.cell(x: 1, y: 1, grid(
+    inset: 1em,
+    columns: (100%,),
+    turing-reference,
+    [== NP-Hard],
+    turing-npc
+  )),
+  grid.cell(x: 0, y: 2, colspan: 2, grid(
+    inset: 1em,
+    columns: (100%,),
+    [= 约数个数/不同质因子个数表],
+    tables
+  )),
+  grid.cell(x: 2, y: 0, rowspan: 3, grid(
+    inset: 1em,
+    columns: (100%,),
+    [= 问题与做法],
+    tasks,
+    [= 网站],
+    sites
+  )),
+  grid.cell(x: 3, y: 0, inset: 1em)[= 其他],
+  grid.cell(x: 3, y: 1, rowspan: 2, inset: 1em, others)
 )
 
 #place(bottom+right, credits)
@@ -173,6 +229,7 @@
 
 #context{
   let size = measure(taowa(none, (width: 0pt, height: 0pt)))
+  size = measure(taowa(none, size))
   let it = []
   for i in range(5) {
     it = taowa(it, size)
