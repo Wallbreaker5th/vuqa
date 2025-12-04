@@ -92,9 +92,13 @@
   #let argmaxd = argmaxd.map(x => {
     let s = str(x)
     let s_ = ()
+    let row_len = 8
+    if s.len() > row_len and calc.rem(s.len(), row_len) > 0 and calc.rem(s.len(), row_len) < 3 {
+      row_len -= 1
+    }
     for i in range(s.codepoints().len()) {
       s_.push(s.codepoints().at(i))
-      if calc.rem(i, 8) == 7 {
+      if calc.rem(i, row_len) == row_len - 1 {
         s_.push("\n")
       }
     }
@@ -105,7 +109,7 @@
   #figure(table(
     columns: col + 1,
     fill: (x, y) => {
-      if (calc.rem(y, 3) == 0) {
+      if (calc.rem(y, 4) == 0) {
         gray.lighten(45%)
       }
     },
@@ -139,8 +143,15 @@
       zh.cppreference.com/w/cpp/language/eval_order
   - 怎么做 NOI 排版风格的题面？\
     官方工具：TUACK + LaTeX\
-    广告：#fa-github()/Wallbreaker5th/fuzzy-cnoi-statement\
-    #h(3em)#fa-github()/Wallbreaker5th/OI-statement-LaTeX
+    广告：#fa-github()/Wallbreaker5th/fuzzy-cnoi-statement#h(1fr) (Typst)\
+    #h(3em)#fa-github()/Wallbreaker5th/OI-statement-LaTeX#h(1fr) (LaTeX)\
+    #h(3em)cnoi.mrpython.top#h(1fr) (Markdown)\
+    #h(3em)hull.aberter0x3f.top#h(1fr) (Typst，但类似TUACK\ #h(1fr)面向全出题流程)
+  - GNU/Linux 如何测程序空间？\
+    - RSS: `time --format="%MKiB" ./a`
+    - VSZ: 程序结尾加 `system("cat /proc/$PPID/status | grep VmPeak");`
+    - 静态空间: `size ./a`
+    定义两个 `bool` 并且取地址差以测量静态空间并不靠谱。
   - 那个 U 群常见问题速查的图？\
     #{
       let ratio = 20%
@@ -152,7 +163,8 @@
 
 #let sites = [
   - 那个画图的网站？\
-    csacademy.com/app/graph_editor/
+    csacademy.com/app/graph_editor/\
+    上位替代：anacc22.github.io/another_graph_editor/
 
   - 那个查原题的网站？\
     www.yuantiji.ac/zh
@@ -170,12 +182,15 @@
     detexify.kirelabs.org/classify.html\
     许多网站使用 KaTeX 渲染公式，相应文档见\
     katex.org/docs/supported
+  - 现在从哪里下 AtCoder 数据？\
+    #fa-github()/conlacda/atcoder-testcases/branches/all
 ]
 
 #let tasks = [
   - 单点修改区间 $op("mex")$\
     考虑一个值 $v$，$v$ 没出现说明 $[l,r]$ 夹在 $v$ 的相邻两次出现之间。因此对于每个值 $v$ 的相邻两次出现 $i$ 和 $j$，在数据结构中插入点 $(i,j)$、权值为 $v$；查询为 $i<l<=r<j$ 的点的权值最小值（单点修改，矩形求 $min$），使用树套树即可。
-
+  - 静态区间 LIS 的 $op("polylog")$ 做法\
+    参考 codeforces.com/blog/entry/111625 或张景行《浅谈一类蒙日矩阵》（2022 集训队论文集）
   
 ]
 
@@ -190,7 +205,7 @@
 #v(-2em)
 
 #grid(
-  columns: (28em, 28em, 28em, 28em),
+  columns: (28em, 28em, 28em, 29em),
   grid.cell(inset: 1em, colspan: 2)[= 图灵奖],
   grid.cell(x: 0, y: 1, grid(
     inset: 1em,
